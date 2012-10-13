@@ -7,18 +7,13 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace NPExam
+namespace GameServer
 {
-    public partial class frmGame : Form
+    public partial class frmServer : Form
     {
-        public frmGame()
+        public frmServer()
         {
             InitializeComponent();
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            MessageBox.Show("123");
         }
     }
 }

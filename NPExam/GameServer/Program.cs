@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace NPExam
+namespace GameServer
 {
     static class Program
     {
@@ -15,7 +15,7 @@ namespace NPExam
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new frmGame());
+            Application.Run(new frmServer());
         }
     }
 }

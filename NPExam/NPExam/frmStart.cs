@@ -9,16 +9,11 @@ using System.Windows.Forms;
 
 namespace NPExam
 {
-    public partial class frmGame : Form
+    public partial class frmStart : Form
     {
-        public frmGame()
+        public frmStart()
         {
             InitializeComponent();
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            MessageBox.Show("123");
         }
     }
 }
