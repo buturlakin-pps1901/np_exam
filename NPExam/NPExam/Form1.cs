@@ -116,8 +116,6 @@ namespace NPExam
                 {
                     name_x = gameField.Width - name_size.Width;
                 }
-
-
                 g.DrawString(player.name, this.Font, Brushes.Black, name_x, name_y);
 
             }
