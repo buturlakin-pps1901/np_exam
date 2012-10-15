@@ -15,7 +15,9 @@ namespace NPExam
         Keys curKey = Keys.A; //это будет вместо нула
         List<playerBall> players = new List<playerBall>();
         playerBall me = new playerBall();
-        int radius = 3;
+        int radius = 5;
+        float speed = 3;
+        
 
         public frmGame(string name,Color color)
         {
@@ -53,7 +55,7 @@ namespace NPExam
         private void tmrGame_Tick(object sender, EventArgs e)
         {
             if (curKey == Keys.Up){
-                me.y -= 5;
+                me.y -= speed;
                 if (me.y < radius)
                 {
                     me.y = radius;
@@ -61,7 +63,7 @@ namespace NPExam
             }
             if (curKey == Keys.Down)
             {
-                me.y += 5;
+                me.y += speed;
                 if (me.y > gameField.Height-radius)
                 {
                     me.y = gameField.Height - radius;
@@ -69,7 +71,7 @@ namespace NPExam
             }
             if (curKey == Keys.Left)
             {
-                me.x -= 5;
+                me.x -= speed;
                 if (me.x < radius)
                 {
                     me.x = radius;
@@ -77,7 +79,7 @@ namespace NPExam
             }
             if (curKey == Keys.Right)
             {
-                me.x += 5;
+                me.x += speed;
                 if (me.x > gameField.Width-radius)
                 {
                     me.x = gameField.Width-radius;
@@ -95,7 +97,29 @@ namespace NPExam
             foreach (var player in players)
             {
                 Pen p = new Pen(player.color);
-                g.FillEllipse(p.Brush, player.x - radius, player.y - radius, 6, 6);
+                g.FillEllipse(p.Brush, player.x - radius, player.y - radius, radius * 2, radius*2);
+                //теперь узнаем где рисовать ник
+                var name_size= g.MeasureString(player.name, this.Font);
+                //изначально пишем ник над кружочком
+                var name_x = player.x - name_size.Width / 2;
+                var name_y = player.y - name_size.Height-radius;
+                //если прижимаемся к верху, то ник прынает под кружочек
+                if (name_y < 0)
+                {
+                    name_y = player.y + radius;
+                }
+                //тоже самое, только для лево/право
+                if (name_x < 0){
+                    name_x = 0;
+                }
+                if (name_x + name_size.Width > gameField.Width)
+                {
+                    name_x = gameField.Width - name_size.Width;
+                }
+
+
+                g.DrawString(player.name, this.Font, Brushes.Black, name_x, name_y);
+
             }
         }
 
@@ -104,7 +128,7 @@ namespace NPExam
     public class playerBall
     {
         public string name;
-        public int x, y;
+        public float x, y;
         public Color color;
     }
 }
