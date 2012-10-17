@@ -7,10 +7,10 @@ namespace mdlTypes
 {
     public struct mapInfo //структура с информацией о игровой карте, массив этих структур передается по сети
     {
-        struct mapInfo{
-		string name;
-		ushort width,height;
-		byte[] hashCode;
-        }
+		public string name;
+		public ushort width,height;
+		public byte[] hashCode;
+        public string path;
+        public byte[] fileData;
     }
 }

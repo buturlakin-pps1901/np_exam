@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using mdlTypes;
 
 namespace GameServer
 {
@@ -14,6 +15,11 @@ namespace GameServer
         public frmServer()
         {
             InitializeComponent();
+        }
+
+        private void button1_Click(object sender, EventArgs e) {
+            frmNewMap nm = new frmNewMap();
+            mapInfo map = nm.AddNewMap();
         }
     }
 }

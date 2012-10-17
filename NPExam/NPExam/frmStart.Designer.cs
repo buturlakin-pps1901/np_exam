@@ -125,6 +125,7 @@
             this.cmdGetMaps.TabIndex = 9;
             this.cmdGetMaps.Text = "Get";
             this.cmdGetMaps.UseVisualStyleBackColor = true;
+            this.cmdGetMaps.Click += new System.EventHandler(this.cmdGetMaps_Click);
             // 
             // frmStart
             // 

@@ -37,6 +37,7 @@
             this.label4 = new System.Windows.Forms.Label();
             this.textBox4 = new System.Windows.Forms.TextBox();
             this.btnBrowse = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // textBox1
@@ -111,12 +112,24 @@
             this.btnBrowse.TabIndex = 9;
             this.btnBrowse.Text = "...";
             this.btnBrowse.UseVisualStyleBackColor = true;
+            this.btnBrowse.Click += new System.EventHandler(this.btnBrowse_Click);
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(463, 119);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 10;
+            this.button1.Text = "Добавить";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // frmNewMap
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(550, 401);
+            this.ClientSize = new System.Drawing.Size(550, 146);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.btnBrowse);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.textBox4);
@@ -126,8 +139,9 @@
             this.Controls.Add(this.textBox2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.textBox1);
+            this.MaximizeBox = false;
             this.Name = "frmNewMap";
-            this.Text = "frmMaps";
+            this.Text = "Добавление карты";
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -144,5 +158,6 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TextBox textBox4;
         private System.Windows.Forms.Button btnBrowse;
+        private System.Windows.Forms.Button button1;
     }
 }
