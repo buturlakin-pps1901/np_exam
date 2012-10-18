@@ -34,8 +34,6 @@ namespace GameServer
                 t.Abort();
             }
             listener.Stop();
-            GC.Collect();
-            //Application.Exit();
         }
 
         void connectWaitProcess() {

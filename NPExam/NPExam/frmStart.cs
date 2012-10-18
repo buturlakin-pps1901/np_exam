@@ -34,11 +34,29 @@ namespace NPExam
                 MessageBox.Show("Укажите имя персонажа.","Ошибка",MessageBoxButtons.OK,MessageBoxIcon.Error);
                 return;
             }
-            
+
+
             frmGame Game = new frmGame(txtName.Text, lblColor.BackColor);
             this.Hide();
             Game.ShowDialog();
             this.Show();
+        }
+
+        private bool checkMapExist(mapInfo map) {
+            string fpath=Path.Combine("maps",map.name);
+            if (!File.Exists(fpath)) return false;
+            var fstream = File.OpenRead(fpath);
+            var md5 = System.Security.Cryptography.MD5.Create();
+            var localHash = md5.ComputeHash(fstream);
+            fstream.Dispose();
+            if (localHash.Length != map.hashCode.Length) return false;
+            for (int i = 0; i < localHash.Length; i++) {
+                if (localHash[i] != map.hashCode[i]) {
+                    return false;
+                }
+            }
+                return true;
+
         }
 
         private void txtName_TextChanged(object sender, EventArgs e)
@@ -57,6 +75,7 @@ namespace NPExam
         }
 
         private void cmdGetMaps_Click(object sender, EventArgs e) {
+            cmdGetMaps.Hide();
             TcpClient client = new TcpClient();
             try {
                 client.Connect(txtServer.Text, 7373);
@@ -92,6 +111,8 @@ namespace NPExam
                 txtGame.Items.Add(map.name);
             }
             client.Close();
+            cmdGetMaps.Show();
+            txtGame.SelectedItem = txtGame.Items[0];
         }
     }
 }

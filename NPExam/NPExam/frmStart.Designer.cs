@@ -84,6 +84,7 @@
             // 
             // txtGame
             // 
+            this.txtGame.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.txtGame.FormattingEnabled = true;
             this.txtGame.Location = new System.Drawing.Point(113, 64);
             this.txtGame.Name = "txtGame";
