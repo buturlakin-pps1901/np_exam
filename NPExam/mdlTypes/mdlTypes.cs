@@ -19,7 +19,9 @@ namespace mdlTypes
 
     public enum netMessageType {
         getMapsListRequest,
-        getMapsListResponse
+        getMapsListResponse,
+        getMapRequest,
+        getMapResponse
     }
     
     [Serializable()]
@@ -60,8 +62,23 @@ namespace mdlTypes
         }
         public getMapsListResponse() {
             code = netMessageType.getMapsListResponse;
-        }
+        }  
+    }
 
-        
+    [Serializable()]
+    public class getMapRequest : netMessage {
+        public string name;
+        public getMapRequest(string mapName="") {
+            code = netMessageType.getMapRequest;
+            name = mapName;
+        }
+    }
+
+    [Serializable()]
+    public class getMapResponse : netMessage {
+        public byte[] data;
+        public getMapResponse() {
+            code = netMessageType.getMapResponse;
+        }
     }
 }

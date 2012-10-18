@@ -72,8 +72,20 @@ namespace GameServer
                         returnGamesList(netStream);
                         netStream.Close();
                         return;
+                    case netMessageType.getMapRequest:
+                        returnMapData(netStream, nm as getMapRequest);
+                        netStream.Close();
+                        return;
                 }
             }
+        }
+
+        void returnMapData(NetworkStream stream,getMapRequest gmr) {
+            string mapName = gmr.name;
+            byte[] data = File.ReadAllBytes(Path.Combine("maps", mapName));
+            getMapResponse gm_resp = new getMapResponse();
+            gm_resp.data = data;
+            gm_resp.sendMessage(stream);
         }
 
         void returnGamesList(NetworkStream stream) {

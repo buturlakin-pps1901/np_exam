@@ -14,7 +14,7 @@ namespace NPExam
 {
     public partial class frmStart : Form
     {
-        private List<mapInfo> maps = new List<mapInfo>();
+        private Dictionary<string, mapInfo> maps = new Dictionary<string, mapInfo>();
         public frmStart()
         {
             InitializeComponent();
@@ -35,15 +35,34 @@ namespace NPExam
                 MessageBox.Show("Укажите имя персонажа.","Ошибка",MessageBoxButtons.OK,MessageBoxIcon.Error);
                 return;
             }
+            if (txtGame.Items.Count == 0) {
+                button1.Enabled = false;
+                var cap = this.Text;
+                this.Text = "Получение списка карт...";
+                cmdGetMaps_Click();
+                button1.Enabled = true;
+                button1.Text = "Играть";
+                this.Text = cap;
+            } else {
+                if (!checkMapExist(maps[txtGame.Text])) {
+                    var cap = this.Text;
+                    this.Text = "Загрузка карты " + txtGame.Text + " ...";
+                    button1.Enabled = false;
+                    getMap(txtGame.Text);
+                    button1.Enabled = true;
+                }
 
+                frmGame Game = new frmGame(txtName.Text, lblColor.BackColor);
+                this.Hide();
+                Game.ShowDialog();
+                this.Show();
+            }
 
-            frmGame Game = new frmGame(txtName.Text, lblColor.BackColor);
-            this.Hide();
-            Game.ShowDialog();
-            this.Show();
+            
         }
 
         private bool checkMapExist(mapInfo map) {
+            Directory.CreateDirectory("maps");
             string fpath=Path.Combine("maps",map.name);
             if (!File.Exists(fpath)) return false;
             var fstream = File.OpenRead(fpath);
@@ -56,13 +75,24 @@ namespace NPExam
                     return false;
                 }
             }
-                return true;
+            return true;
 
         }
 
-        private void txtName_TextChanged(object sender, EventArgs e)
-        {
-
+        private void getMap(string mapName) {
+            TcpClient client = new TcpClient();
+            try {
+                client.Connect(txtServer.Text, 7373);
+            } catch (Exception ex) {
+                MessageBox.Show("Не могу подключится к серверу!", "Ошибка подключения", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            getMapRequest gmr = new getMapRequest(mapName);
+            gmr.sendMessage(client.GetStream());
+            getMapResponse gmr_resp = new getMapResponse();
+            gmr_resp = gmr_resp.readMessage(client.GetStream()) as getMapResponse;
+            File.WriteAllBytes(Path.Combine("maps", mapName),gmr_resp.data);
+            client.Close();
         }
 
         private void lblColor_Click(object sender, EventArgs e)
@@ -75,8 +105,8 @@ namespace NPExam
             }
         }
 
-        private void cmdGetMaps_Click(object sender, EventArgs e) {
-            cmdGetMaps.Hide();
+        private void cmdGetMaps_Click() {
+            
             TcpClient client = new TcpClient();
             try {
                 client.Connect(txtServer.Text, 7373);
@@ -89,13 +119,13 @@ namespace NPExam
             gmlr.sendMessage(stream);
             getMapsListResponse gml_resp = new getMapsListResponse();
             gml_resp = gml_resp.readMessage(stream) as getMapsListResponse;
-            maps = gml_resp.Maps;
+            
             txtGame.Items.Clear();
-            foreach (var map in maps) {
+            foreach (var map in gml_resp.Maps) {
                 txtGame.Items.Add(map.name);
+                maps.Add(map.name, map);
             }
             client.Close();
-            cmdGetMaps.Show();
             txtGame.SelectedItem = txtGame.Items[0];
         }
     }

@@ -37,7 +37,6 @@
             this.button1 = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
             this.lblColor = new System.Windows.Forms.Label();
-            this.cmdGetMaps = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // label1
@@ -55,6 +54,7 @@
             this.txtServer.Name = "txtServer";
             this.txtServer.Size = new System.Drawing.Size(150, 20);
             this.txtServer.TabIndex = 1;
+            this.txtServer.Text = "localhost";
             // 
             // txtName
             // 
@@ -62,7 +62,6 @@
             this.txtName.Name = "txtName";
             this.txtName.Size = new System.Drawing.Size(150, 20);
             this.txtName.TabIndex = 3;
-            this.txtName.TextChanged += new System.EventHandler(this.txtName_TextChanged);
             // 
             // label2
             // 
@@ -88,7 +87,7 @@
             this.txtGame.FormattingEnabled = true;
             this.txtGame.Location = new System.Drawing.Point(113, 64);
             this.txtGame.Name = "txtGame";
-            this.txtGame.Size = new System.Drawing.Size(100, 21);
+            this.txtGame.Size = new System.Drawing.Size(150, 21);
             this.txtGame.TabIndex = 5;
             // 
             // button1
@@ -118,22 +117,11 @@
             this.lblColor.TabIndex = 8;
             this.lblColor.Click += new System.EventHandler(this.lblColor_Click);
             // 
-            // cmdGetMaps
-            // 
-            this.cmdGetMaps.Location = new System.Drawing.Point(219, 62);
-            this.cmdGetMaps.Name = "cmdGetMaps";
-            this.cmdGetMaps.Size = new System.Drawing.Size(44, 23);
-            this.cmdGetMaps.TabIndex = 9;
-            this.cmdGetMaps.Text = "Get";
-            this.cmdGetMaps.UseVisualStyleBackColor = true;
-            this.cmdGetMaps.Click += new System.EventHandler(this.cmdGetMaps_Click);
-            // 
             // frmStart
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(275, 172);
-            this.Controls.Add(this.cmdGetMaps);
             this.Controls.Add(this.lblColor);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.button1);
@@ -164,6 +152,5 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label lblColor;
-        private System.Windows.Forms.Button cmdGetMaps;
     }
 }
