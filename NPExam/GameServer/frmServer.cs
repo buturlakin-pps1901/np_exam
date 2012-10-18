@@ -19,6 +19,7 @@ namespace GameServer
         private Dictionary<string, clsGame> games = new Dictionary<string, clsGame>();
         private Thread connectWaitThread = null;
         private List<Thread> threads = new List<Thread>(); //здесь все процессы - это чтобы сборщик мусора их не собирал
+        private Dictionary<string, clsUser> users = new Dictionary<string, clsUser>();
         TcpListener listener = new TcpListener(7373);
 
         public frmServer()
@@ -76,8 +77,48 @@ namespace GameServer
                         returnMapData(netStream, nm as getMapRequest);
                         netStream.Close();
                         return;
+                    case netMessageType.newUserRequest:
+                        var user=newUser(nm as newUserRequest, netStream);
+                        if (user != null) {
+                            lock (games) {
+                                user.ListenClient = client;
+                            }
+                            userListenLoop(user);
+                        }
+                        return;
                 }
             }
+        }
+
+        clsUser newUser(newUserRequest num, NetworkStream stream) {
+            newUserResponse nur = new newUserResponse();
+            
+            if (users.Keys.Contains(num.name)) {
+                nur.okey = false;
+                nur.reason = "Игрок с таким именем уже играет на сервере.";
+                nur.sendMessage(stream);
+                stream.Close();
+                return null;
+            } else {
+                clsUser user = new clsUser();
+                user.Color = num.color;
+                user.Name = num.name;
+                user.Game = games[num.mapName];
+                lock(games){
+                    games[num.mapName].Users.Add(user.Name,user);
+                }
+                nur.okey = true;
+                nur.sendMessage(stream);
+                return user;
+            }
+        }
+
+        void userListenLoop(clsUser user) {
+            
+        }
+
+        void userSendingLoop(object userObject) {
+            clsUser user = userObject as clsUser;
         }
 
         void returnMapData(NetworkStream stream,getMapRequest gmr) {

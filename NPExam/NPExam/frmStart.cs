@@ -15,6 +15,8 @@ namespace NPExam
     public partial class frmStart : Form
     {
         private Dictionary<string, mapInfo> maps = new Dictionary<string, mapInfo>();
+        private TcpClient mainClient = new TcpClient();
+
         public frmStart()
         {
             InitializeComponent();
@@ -51,6 +53,8 @@ namespace NPExam
                     getMap(txtGame.Text);
                     button1.Enabled = true;
                 }
+                //проверяем имя
+                if (connectToServer() == false) return;
 
                 frmGame Game = new frmGame(txtName.Text, lblColor.BackColor);
                 this.Hide();
@@ -59,6 +63,27 @@ namespace NPExam
             }
 
             
+        }
+
+        private bool connectToServer() {
+            newUserRequest nur = new newUserRequest();
+            nur.name = txtName.Text;
+            nur.mapName = txtGame.Text;
+            nur.color = lblColor.BackColor;
+            try {
+                mainClient.Connect(txtServer.Text, 7373);
+            } catch (Exception ex) {
+                MessageBox.Show(ex.Message, "Ошибка подключения", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+            nur.sendMessage(mainClient.GetStream());
+            newUserResponse nu_resp = new newUserResponse();
+            nu_resp = nu_resp.readMessage(mainClient.GetStream()) as newUserResponse;
+            if (nu_resp.okey == false) {
+                MessageBox.Show(nu_resp.reason, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+            return true;
         }
 
         private bool checkMapExist(mapInfo map) {
@@ -84,7 +109,7 @@ namespace NPExam
             try {
                 client.Connect(txtServer.Text, 7373);
             } catch (Exception ex) {
-                MessageBox.Show("Не могу подключится к серверу!", "Ошибка подключения", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ex.Message, "Ошибка подключения", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
             getMapRequest gmr = new getMapRequest(mapName);

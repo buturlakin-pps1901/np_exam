@@ -21,7 +21,11 @@ namespace mdlTypes
         getMapsListRequest,
         getMapsListResponse,
         getMapRequest,
-        getMapResponse
+        getMapResponse,
+        newUserRequest,
+        newUserResponse,
+        secondConnectionRequest
+
     }
     
     [Serializable()]
@@ -79,6 +83,33 @@ namespace mdlTypes
         public byte[] data;
         public getMapResponse() {
             code = netMessageType.getMapResponse;
+        }
+    }
+
+    [Serializable()]
+    public class newUserRequest : netMessage {
+        public string name,mapName;
+        public System.Drawing.Color color;
+
+        public newUserRequest() {
+            code = netMessageType.newUserRequest;
+        }
+    }
+
+    [Serializable()]
+    public class newUserResponse:netMessage {
+        public bool okey;
+        public string reason;
+        public newUserResponse() {
+            code = netMessageType.newUserResponse;
+        }
+    }
+
+    [Serializable()]
+    public class secondConnectionRequest:netMessage {
+        string userName;
+        public secondConnectionRequest() {
+            code = netMessageType.secondConnectionRequest;
         }
     }
 }

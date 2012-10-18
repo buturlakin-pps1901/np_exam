@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using mdlTypes;
 using System.Threading;
+using System.Net.Sockets;
 
 
 namespace GameServer {
@@ -11,17 +12,19 @@ namespace GameServer {
     class clsGame {
 
         private mapInfo map;
-        private clsUser user;
+        private Dictionary<string, clsUser> users = new Dictionary<string, clsUser>();
+
+        internal Dictionary<string, clsUser> Users {
+            get { return users; }
+            set { users = value; }
+        }
 
         public mapInfo Map {
             get { return map; }
             set { map = value; }
         }
 
-        public clsUser User {
-            get { return user; }
-            set { user = value; }
-        }
+
     }
 
     class clsUser {
@@ -55,17 +58,17 @@ namespace GameServer {
             set { x = value; }
         }
 
-        private Thread firstThread;
+        private TcpClient listenClient;
 
-        public Thread FirstThread {
-            get { return firstThread; }
-            set { firstThread = value; }
+        public TcpClient ListenClient {
+            get { return listenClient; }
+            set { listenClient = value; }
         }
-        private Thread secondThread;
+        private TcpClient sendClient;
 
-        public Thread SecondThread {
-            get { return secondThread; }
-            set { secondThread = value; }
+        public TcpClient SendClient {
+            get { return sendClient; }
+            set { sendClient = value; }
         }
     }
 }
