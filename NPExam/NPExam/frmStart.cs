@@ -14,6 +14,7 @@ namespace NPExam
 {
     public partial class frmStart : Form
     {
+        private List<mapInfo> maps = new List<mapInfo>();
         public frmStart()
         {
             InitializeComponent();
@@ -84,30 +85,13 @@ namespace NPExam
                 return;
             }
             var stream = client.GetStream();
-            BinaryWriter bw = new BinaryWriter(stream);
-            BinaryReader br = new BinaryReader(stream);
-            ushort code=1,length=4;
-            //итак сообщаем серверу что нам надо получить список карт
-            bw.Write(length);
-            bw.Write(code);
-            //теперь читаем ответ сервера
-            length=br.ReadUInt16();
-            code = br.ReadUInt16();
-            if (code != 2) {
-                client.Close();
-                MessageBox.Show("code="+code.ToString(), "Неизвестный ответ от сервера", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            //количество карт (игр)
+            getMapsListRequest gmlr = new getMapsListRequest();
+            gmlr.sendMessage(stream);
+            getMapsListResponse gml_resp = new getMapsListResponse();
+            gml_resp = gml_resp.readMessage(stream) as getMapsListResponse;
+            maps = gml_resp.Maps;
             txtGame.Items.Clear();
-            List<mdlTypes.mapInfo> maps = new List<mdlTypes.mapInfo>();
-            ushort count = br.ReadUInt16();
-            for(int i=0;i<count;i++){
-                mapInfo map = new mapInfo();
-                map.name = br.ReadString();
-                map.width = br.ReadUInt16();
-                map.height = br.ReadUInt16();
-                map.hashCode = br.ReadBytes(16);
-                maps.Add(map);
+            foreach (var map in maps) {
                 txtGame.Items.Add(map.name);
             }
             client.Close();

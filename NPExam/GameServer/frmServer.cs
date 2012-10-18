@@ -29,16 +29,16 @@ namespace GameServer
         }
 
         void frmServer_FormClosing(object sender, FormClosingEventArgs e) {
+            listener.Stop();
             foreach (var t in threads) {
-                t.Interrupt();
+                //t.Interrupt();
                 t.Abort();
             }
-            listener.Stop();
+            
         }
 
         void connectWaitProcess() {
             try {
-                
                 listener.Start();
                 while (true) {
                     var client = listener.AcceptTcpClient();
@@ -56,43 +56,34 @@ namespace GameServer
         void clientProcess(object tcpClientObject) {
             TcpClient client = tcpClientObject as TcpClient;
             NetworkStream netStream = client.GetStream();
-            BinaryReader br = new BinaryReader(netStream);
-            BinaryWriter bw = new BinaryWriter(netStream);
+
             while(true){
                 //итак узнаем что же он хочет от нас?
-                ushort length=0,code=0;
-
+                netMessage nm = new netMessage();
                 try {
-                    length = br.ReadUInt16();
-                    code = br.ReadUInt16();
+                    nm = nm.readMessage(netStream);
+
                 } catch (Exception ex) {
                     return;
                 }
 
-                switch (code){
-                    case 1: //список карт
-                        returnGamesList(bw);
-                        break;
+                switch (nm.code){
+                    case netMessageType.getMapsListRequest: //список карт
+                        returnGamesList(netStream);
+                        netStream.Close();
+                        return;
                 }
             }
         }
 
-        void returnGamesList(BinaryWriter bw) {
+        void returnGamesList(NetworkStream stream) {
+            getMapsListResponse gmlr = new getMapsListResponse();
             lock (games) {
-                ushort length = 0;
-                ushort code = 2;
-                ushort count = (ushort)games.Count;
-                bw.Write(length);
-                bw.Write(code);
-                bw.Write(count);
                 foreach (var name in games.Keys) {
-                    var map = games[name].Map;
-                    bw.Write(map.name);
-                    bw.Write(map.width);
-                    bw.Write(map.height);
-                    bw.Write(map.hashCode);
+                    gmlr.Maps.Add(games[name].Map);
                 }
             }
+            gmlr.sendMessage(stream);
         }
 
 
