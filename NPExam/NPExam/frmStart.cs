@@ -59,7 +59,7 @@ namespace NPExam
         private void cmdGetMaps_Click(object sender, EventArgs e) {
             TcpClient client = new TcpClient();
             try {
-                client.Connect(txtServer.Text, 3737);
+                client.Connect(txtServer.Text, 7373);
             } catch (Exception ex) {
                 MessageBox.Show(ex.Message, "Ошибка подключения к игровому серверу", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
@@ -87,13 +87,11 @@ namespace NPExam
                 map.name = br.ReadString();
                 map.width = br.ReadUInt16();
                 map.height = br.ReadUInt16();
-                map.hashCode = br.ReadBytes(32);
+                map.hashCode = br.ReadBytes(16);
                 maps.Add(map);
                 txtGame.Items.Add(map.name);
             }
-
-            
-
+            client.Close();
         }
     }
 }
