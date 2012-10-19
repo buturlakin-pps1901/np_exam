@@ -92,7 +92,6 @@ namespace GameServer
 
         clsUser newUser(newUserRequest num, NetworkStream stream) {
             newUserResponse nur = new newUserResponse();
-            
             if (users.Keys.Contains(num.name)) {
                 nur.okey = false;
                 nur.reason = "Игрок с таким именем уже играет на сервере.";
@@ -114,7 +113,21 @@ namespace GameServer
         }
 
         void userListenLoop(clsUser user) {
-            
+            netMessage message = new netMessage();
+            while (true)
+            {
+                message=message.readMessage(user.ListenClient.GetStream());
+                switch (message.code)
+                {
+                    case netMessageType.userToServer:
+                        lock (games)
+                        {
+                            user.X = (message as messageUserToServer).x;
+                        }
+                
+                        break;
+                }
+            }
         }
 
         void userSendingLoop(object userObject) {

@@ -46,14 +46,14 @@ namespace GameServer {
             get { return game; }
             set { game = value; }
         }
-        private int x, y;
+        private float x, y;
 
-        public int Y {
+        public float Y {
             get { return y; }
             set { y = value; }
         }
 
-        public int X {
+        public float X {
             get { return x; }
             set { x = value; }
         }
