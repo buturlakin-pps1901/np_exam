@@ -6,6 +6,9 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.Net.Sockets;
+using System.Threading;
+using mdlTypes;
 
 namespace NPExam
 {
@@ -13,18 +16,49 @@ namespace NPExam
     public partial class frmGame : Form
     {
         Keys curKey = Keys.A; //это будет вместо нула
-        List<playerBall> players = new List<playerBall>();
-        playerBall me = new playerBall();
+        List<userInfo> players = new List<userInfo>();
+        userInfo me = new userInfo();
         int radius = 5;
         float speed = 3;
-        
+        private TcpClient sendClient;
 
-        public frmGame(string name,Color color)
+        public frmGame(string name,Color color,TcpClient client)
         {
             InitializeComponent();
             this.KeyUp += new KeyEventHandler(gameField_KeyUp);
             this.KeyDown += new KeyEventHandler(gameField_KeyDown);
             gameInit(name,color);
+            sendClient = client;
+
+        }
+
+        void reciveMessagesLoop() {
+            TcpClient client = new TcpClient();
+            try {
+                client.Connect(sendClient.Client.RemoteEndPoint as System.Net.IPEndPoint);
+            }catch(Exception ex){
+                MessageBox.Show(ex.Message, "Ошибка при попытке открыть второе подключение", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                this.Close();
+                return;
+            }
+            netMessage message = new netMessage();
+            while (true) {
+                message = message.readMessage(client.GetStream());
+                switch (message.code) {
+                    case netMessageType.usersFromServer:
+                        updateUsersTable(message as messageUsersFromServer);
+                        break;
+                }
+            }
+        }
+
+        void updateUsersTable(messageUsersFromServer message) {
+            lock (players) {
+                players.Clear();
+                foreach (var user in message.users) {
+                    players.Add(user);
+                }
+            }
         }
 
         void gameInit(string name, Color color)
@@ -85,8 +119,10 @@ namespace NPExam
                     me.x = gameField.Width-radius;
                 }
             }
-
-            gameField.Invalidate();
+            messageUserToServer muts = new messageUserToServer();
+            muts.x = me.x;
+            muts.y = me.y;
+            //gameField.Invalidate();
         }
 
         private void gameField_Paint(object sender, PaintEventArgs e)
@@ -123,10 +159,5 @@ namespace NPExam
 
     }
 
-    public class playerBall
-    {
-        public string name;
-        public float x, y;
-        public Color color;
-    }
+    
 }

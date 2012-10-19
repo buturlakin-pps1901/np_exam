@@ -17,6 +17,13 @@ namespace mdlTypes
         public byte[] fileData;
     }
 
+    [Serializable()]
+    public struct userInfo {
+        public string name;
+        public System.Drawing.Color color;
+        public float x, y;
+    }
+
     public enum netMessageType {
         getMapsListRequest,
         getMapsListResponse,
@@ -24,7 +31,9 @@ namespace mdlTypes
         getMapResponse,
         newUserRequest,
         newUserResponse,
-        secondConnectionRequest
+        secondConnectionRequest,
+        usersFromServer,
+        userToServer
 
     }
     
@@ -110,6 +119,22 @@ namespace mdlTypes
         string userName;
         public secondConnectionRequest() {
             code = netMessageType.secondConnectionRequest;
+        }
+    }
+
+    [Serializable()]
+    public class messageUsersFromServer:netMessage {
+        public userInfo[] users;
+        public messageUsersFromServer() {
+            code = netMessageType.usersFromServer;
+        }
+    }
+
+    [Serializable()]
+    public class messageUserToServer:netMessage{
+        public float x,y;
+        public messageUserToServer() {
+            code = netMessageType.userToServer;
         }
     }
 }
