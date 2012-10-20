@@ -34,7 +34,6 @@ namespace mdlTypes
         secondConnectionRequest,
         usersFromServer,
         userToServer
-
     }
     
     [Serializable()]
@@ -116,7 +115,7 @@ namespace mdlTypes
 
     [Serializable()]
     public class secondConnectionRequest:netMessage {
-        string userName;
+        public string userName;
         public secondConnectionRequest() {
             code = netMessageType.secondConnectionRequest;
         }

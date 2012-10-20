@@ -58,6 +58,7 @@
             this.Controls.Add(this.gameField);
             this.Name = "frmGame";
             this.Text = "Игра";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.frmGame_FormClosed);
             ((System.ComponentModel.ISupportInitialize)(this.gameField)).EndInit();
             this.ResumeLayout(false);
 

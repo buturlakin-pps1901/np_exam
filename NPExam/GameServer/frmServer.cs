@@ -84,8 +84,19 @@ namespace GameServer
                                 user.ListenClient = client;
                             }
                             userListenLoop(user);
+                            lock (games) {
+                                user.Game.Users.Remove(user.Name);
+                                users.Remove(user.Name);
+                            }
+                            client.Close();
                         }
                         return;
+                    case netMessageType.secondConnectionRequest:
+                        string uname = (nm as secondConnectionRequest).userName;
+                        lock (games) {
+                            users[uname].SendClient = client;
+                        }
+                        break;
                 }
             }
         }
@@ -105,6 +116,7 @@ namespace GameServer
                 user.Game = games[num.mapName];
                 lock(games){
                     games[num.mapName].Users.Add(user.Name,user);
+                    users.Add(user.Name, user);
                 }
                 nur.okey = true;
                 nur.sendMessage(stream);
@@ -116,18 +128,49 @@ namespace GameServer
             netMessage message = new netMessage();
             while (true)
             {
-                message=message.readMessage(user.ListenClient.GetStream());
+                try {
+                    message = message.readMessage(user.ListenClient.GetStream());
+                } catch (Exception ex) {
+                    return;
+                }
                 switch (message.code)
                 {
                     case netMessageType.userToServer:
                         lock (games)
                         {
                             user.X = (message as messageUserToServer).x;
+                            user.Y = (message as messageUserToServer).y;
+                            sendNewCoordinates(user.Game.Map.name,user);
                         }
                 
                         break;
                 }
             }
+        }
+
+        void sendNewCoordinates(String gameName,clsUser user) {
+            messageUsersFromServer mufs = new messageUsersFromServer();
+            lock (games) {
+                mufs.users=new userInfo[games[gameName].Users.Count];
+                int i=0;
+                foreach (var userName in games[gameName].Users.Keys) {
+                    userInfo ui = new userInfo();
+                    ui.color = games[gameName].Users[userName].Color;
+                    ui.name = userName;
+                    ui.x = games[gameName].Users[userName].X;
+                    ui.y = games[gameName].Users[userName].Y;
+                    
+                    mufs.users[i] = ui;
+                    i++;
+                }
+                foreach (var userName in games[gameName].Users.Keys) {
+                    if (games[gameName].Users[userName].SendClient != null && games[gameName].Users[userName].SendClient.Connected) {
+                        mufs.sendMessage(games[gameName].Users[userName].SendClient.GetStream());
+                    }
+                }
+            }
+
+            
         }
 
         void userSendingLoop(object userObject) {

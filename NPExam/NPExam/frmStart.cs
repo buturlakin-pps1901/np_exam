@@ -54,9 +54,12 @@ namespace NPExam
                     button1.Enabled = true;
                 }
                 //проверяем имя
-                if (connectToServer() == false) return;
+                if (connectToServer() == false) {
+                    mainClient.Close();
+                    return;
+                }
 
-                frmGame Game = new frmGame(txtName.Text, lblColor.BackColor);
+                frmGame Game = new frmGame(txtName.Text, lblColor.BackColor,mainClient);
                 this.Hide();
                 Game.ShowDialog();
                 this.Show();
@@ -74,6 +77,7 @@ namespace NPExam
                 mainClient.Connect(txtServer.Text, 7373);
             } catch (Exception ex) {
                 MessageBox.Show(ex.Message, "Ошибка подключения", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                mainClient.Close();
                 return false;
             }
             nur.sendMessage(mainClient.GetStream());
